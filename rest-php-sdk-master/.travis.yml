@@ -1,0 +1,34 @@
+language: php
+php:
+  - 7.2
+  - 7.3
+  - 7.4
+
+before_install:
+  - |
+    if [[ ${TRAVIS_PHP_VERSION:0:3} == "7.1" ]]; then
+       composer require php-coveralls/php-coveralls
+    fi
+
+install:
+  - |
+    if [[ ${TRAVIS_PHP_VERSION:0:3} == "7.1" ]]; then
+       composer update
+    else
+       composer install
+    fi
+
+cache:
+  directories:
+    - $HOME/.composer/cache
+
+script:
+  - ./vendor/bin/phpunit --coverage-clover=clover.xml src/
+
+after_script:
+  - |
+    if [[ ${TRAVIS_PHP_VERSION:0:3} == "7.1" ]]; then
+       php ./vendor/bin/coveralls -v
+    fi
+
+    after_script: ./vendor/bin/coveralls -v
